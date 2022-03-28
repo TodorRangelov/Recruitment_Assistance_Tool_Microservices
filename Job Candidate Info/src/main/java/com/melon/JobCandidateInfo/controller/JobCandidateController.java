@@ -1,5 +1,6 @@
 package com.melon.JobCandidateInfo.controller;
 
+import com.melon.JobCandidateInfo.domain.document.JobCandidateInfoDocument;
 import com.melon.JobCandidateInfo.domain.entity.JobCandidateInfo;
 import com.melon.JobCandidateInfo.domain.responseDto.JobCandidateInfoRequestDto;
 import com.melon.JobCandidateInfo.service.JobCandidateInfoService;
@@ -36,6 +37,14 @@ public class JobCandidateController {
 
         JobCandidateInfo jobCandidateInfo = this.service.getById(id);
         return new ResponseEntity<>(jobCandidateInfo, HttpStatus.OK);
+    }
+
+    //MongoDB
+    @GetMapping("getFromMongoDB")
+    public ResponseEntity<List<JobCandidateInfoDocument>> getAllFromMongoDB() {
+
+        List<JobCandidateInfoDocument> allJobCandidateInfo = this.service.getAllFromMongoDB();
+        return new ResponseEntity<>(allJobCandidateInfo, HttpStatus.OK);
     }
 
 }

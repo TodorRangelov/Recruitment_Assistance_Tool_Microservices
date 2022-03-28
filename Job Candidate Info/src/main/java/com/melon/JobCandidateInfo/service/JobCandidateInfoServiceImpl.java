@@ -1,10 +1,12 @@
 package com.melon.JobCandidateInfo.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.melon.JobCandidateInfo.domain.document.JobCandidateInfoDocument;
 import com.melon.JobCandidateInfo.domain.entity.JobCandidateInfo;
 import com.melon.JobCandidateInfo.domain.responseDto.JobCandidateInfoRequestDto;
 import com.melon.JobCandidateInfo.exception.AddJobCandidateInfoException;
 import com.melon.JobCandidateInfo.exception.JobCandidateInfoNotFoundException;
+import com.melon.JobCandidateInfo.repository.JobCandidateInfoRepositoryMongo;
 import com.melon.JobCandidateInfo.repository.JobCandidateInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,11 +17,13 @@ import java.util.List;
 public class JobCandidateInfoServiceImpl implements JobCandidateInfoService {
 
     private final JobCandidateInfoRepository repository;
+    private final JobCandidateInfoRepositoryMongo repositoryMongo;
     public final ObjectMapper objectMapper;
 
     @Autowired
-    public JobCandidateInfoServiceImpl(JobCandidateInfoRepository repository, ObjectMapper objectMapper) {
+    public JobCandidateInfoServiceImpl(JobCandidateInfoRepository repository, JobCandidateInfoRepositoryMongo repositoryMongo, ObjectMapper objectMapper) {
         this.repository = repository;
+        this.repositoryMongo = repositoryMongo;
         this.objectMapper = objectMapper;
     }
 
@@ -29,6 +33,10 @@ public class JobCandidateInfoServiceImpl implements JobCandidateInfoService {
         try {
             JobCandidateInfo jobCandidateInfo = this.objectMapper.convertValue(requestDto, JobCandidateInfo.class);
             this.repository.save(jobCandidateInfo);
+            JobCandidateInfo byEmail = this.repository.findByEmail(requestDto.getEmail());
+            JobCandidateInfoDocument jobCandidateInfoDocument = this.objectMapper
+                    .convertValue(byEmail, JobCandidateInfoDocument.class);
+            this.repositoryMongo.save(jobCandidateInfoDocument);
         } catch (Exception e) {
             throw new AddJobCandidateInfoException();
         }
@@ -54,5 +62,11 @@ public class JobCandidateInfoServiceImpl implements JobCandidateInfoService {
         JobCandidateInfo jobCandidateInfo = this.repository.findById(id)
                 .orElseThrow(() -> new JobCandidateInfoNotFoundException(id));
         return jobCandidateInfo;
+    }
+
+    @Override
+    public List<JobCandidateInfoDocument> getAllFromMongoDB() {
+
+        return this.repositoryMongo.findAll();
     }
 }
