@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/ms/v1/jobcandidatesinfo/")
+@RequestMapping("/ms/v1/")
 public class JobCandidateController {
 
     @Autowired
