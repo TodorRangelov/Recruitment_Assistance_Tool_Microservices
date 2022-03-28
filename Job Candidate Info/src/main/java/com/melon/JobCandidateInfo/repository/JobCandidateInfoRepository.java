@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface JobCandidateInfoRepository extends JpaRepository<JobCandidateInfo, Long> {
+
+    JobCandidateInfo findByEmail(String email);
 }
